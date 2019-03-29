@@ -1,0 +1,20 @@
+{
+  "accountLinkingResponse": {
+    "authorizationUrl": "https://<YOUR_AUTHORIZATION_SERVER_URL>/index.php",
+    "clientId": "<CLIENT_ID_FROM_GitKraken>",
+    "domains": [
+      "gitkraken.com",
+      "amazon.com",
+      "amazon.co.uk",
+      "amazon.co.jp",
+      "amazon.com.au",
+      "<YOUR_AUTHORIZATION_SERVER_DOMAIN_NAME>"
+    ],
+    "scopes": [
+      "board:write",
+      "user:write"
+    ],
+    "skipOnEnablement": true,
+    "type": "IMPLICIT"
+  }
+}

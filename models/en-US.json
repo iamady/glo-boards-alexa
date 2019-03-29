@@ -1,0 +1,706 @@
+{
+  "interactionModel": {
+    "languageModel": {
+      "invocationName": "glow boards",
+      "intents": [
+        {
+          "name": "AMAZON.CancelIntent",
+          "samples": [
+            "cancel"
+          ]
+        },
+        {
+          "name": "AMAZON.HelpIntent",
+          "samples": []
+        },
+        {
+          "name": "AMAZON.StopIntent",
+          "samples": [
+            "nothing",
+            "bye",
+            "thank you",
+            "stop"
+          ]
+        },
+        {
+          "name": "AMAZON.NavigateHomeIntent",
+          "samples": []
+        },
+        {
+          "name": "AMAZON.FallbackIntent",
+          "samples": []
+        },
+        {
+          "name": "ListBoards",
+          "slots": [],
+          "samples": [
+            "board list",
+            "list of boards",
+            "name all boards",
+            "get all boards",
+            "list all boards",
+            "boards"
+          ]
+        },
+        {
+          "name": "SelectBoard",
+          "slots": [
+            {
+              "name": "BoardName",
+              "type": "AMAZON.SearchQuery",
+              "samples": [
+                "{BoardName}"
+              ]
+            },
+            {
+              "name": "BoardNumber",
+              "type": "AMAZON.NUMBER"
+            }
+          ],
+          "samples": [
+            "select a board {BoardName}",
+            "select board {BoardName}",
+            "select a board",
+            "select board",
+            "select board number {BoardNumber}"
+          ]
+        },
+        {
+          "name": "AddBoard",
+          "slots": [
+            {
+              "name": "BoardName",
+              "type": "AMAZON.SearchQuery",
+              "samples": [
+                "add {BoardName}",
+                "{BoardName}"
+              ]
+            }
+          ],
+          "samples": [
+            "add board",
+            "create board",
+            "add board {BoardName}",
+            "create a board",
+            "create a board {BoardName}",
+            "add a board",
+            "add a board {BoardName}"
+          ]
+        },
+        {
+          "name": "DeleteBoard",
+          "slots": [
+            {
+              "name": "BoardName",
+              "type": "AMAZON.SearchQuery",
+              "samples": [
+                "{BoardName}"
+              ]
+            }
+          ],
+          "samples": [
+            "remove board",
+            "delete board",
+            "delete board {BoardName}",
+            "delete a board {BoardName}",
+            "delete a board",
+            "remove board {BoardName}",
+            "remove a board {BoardName}",
+            "remove a board"
+          ]
+        },
+        {
+          "name": "ListColumns",
+          "slots": [],
+          "samples": [
+            "get all columns",
+            "name all columns",
+            "list all columns",
+            "list columns",
+            "column list"
+          ]
+        },
+        {
+          "name": "AddColumn",
+          "slots": [
+            {
+              "name": "ColumnName",
+              "type": "AMAZON.SearchQuery",
+              "samples": [
+                "{ColumnName}"
+              ]
+            }
+          ],
+          "samples": [
+            "add column {ColumnName}",
+            "add a column {ColumnName}",
+            "add a column"
+          ]
+        },
+        {
+          "name": "DeleteColumn",
+          "slots": [
+            {
+              "name": "ColumnName",
+              "type": "AMAZON.SearchQuery",
+              "samples": [
+                "{ColumnName}"
+              ]
+            }
+          ],
+          "samples": [
+            "delete column {ColumnName}",
+            "delete a column {ColumnName}",
+            "delete a column",
+            "remove column {ColumnName}",
+            "remove a column {ColumnName}",
+            "remove a column"
+          ]
+        },
+        {
+          "name": "AddCard",
+          "slots": [
+            {
+              "name": "DueDate",
+              "type": "AMAZON.DATE"
+            },
+            {
+              "name": "CardName",
+              "type": "AMAZON.SearchQuery",
+              "samples": [
+                "card name will be {CardName}",
+                "card name should be {CardName}",
+                "card name is {CardName}",
+                "{CardName}"
+              ]
+            },
+            {
+              "name": "ColumnName",
+              "type": "AMAZON.SearchQuery",
+              "samples": [
+                "column name is {ColumnName}",
+                "{ColumnName}"
+              ]
+            },
+            {
+              "name": "CardDescription",
+              "type": "AMAZON.SearchQuery",
+              "samples": [
+                "{CardDescription}"
+              ]
+            }
+          ],
+          "samples": [
+            "add a card {CardName}",
+            "add card",
+            "add a card"
+          ]
+        },
+        {
+          "name": "MoveCard",
+          "slots": [
+            {
+              "name": "CardName",
+              "type": "AMAZON.SearchQuery",
+              "samples": [
+                "card name will be {CardName}",
+                "card name should be {CardName}",
+                "card name is {CardName}",
+                "{CardName}"
+              ]
+            },
+            {
+              "name": "FromColumn",
+              "type": "AMAZON.SearchQuery",
+              "samples": [
+                "from column {FromColumn}",
+                "column name is {FromColumn}",
+                "{FromColumn}"
+              ]
+            },
+            {
+              "name": "ToColumn",
+              "type": "AMAZON.SearchQuery",
+              "samples": [
+                "{ToColumn}",
+                "column name is {ToColumn}",
+                "column {ToColumn}",
+                "to column {ToColumn}"
+              ]
+            }
+          ],
+          "samples": [
+            "move a card {CardName}",
+            "move card",
+            "move a card"
+          ]
+        },
+        {
+          "name": "DeleteCard",
+          "slots": [
+            {
+              "name": "CardName",
+              "type": "AMAZON.SearchQuery",
+              "samples": [
+                "{CardName}"
+              ]
+            }
+          ],
+          "samples": [
+            "delete card {CardName}",
+            "delete a card {CardName}",
+            "delete a card",
+            "remove card {CardName}",
+            "remove a card {CardName}",
+            "remove a card"
+          ]
+        },
+        {
+          "name": "TasksDue",
+          "slots": [
+            {
+              "name": "DueDate",
+              "type": "AMAZON.DATE",
+              "samples": [
+                "on {DueDate}",
+                "{DueDate}"
+              ]
+            }
+          ],
+          "samples": [
+            "tasks due",
+            "what tasks do i have {DueDate}",
+            "tasks due {DueDate}"
+          ]
+        },
+        {
+          "name": "SignIn",
+          "slots": [],
+          "samples": [
+            "connect",
+            "log in",
+            "sign up",
+            "register",
+            "login",
+            "sign in"
+          ]
+        }
+      ],
+      "types": []
+    },
+    "dialog": {
+      "intents": [
+        {
+          "name": "SelectBoard",
+          "confirmationRequired": false,
+          "prompts": {},
+          "slots": [
+            {
+              "name": "BoardName",
+              "type": "AMAZON.SearchQuery",
+              "elicitationRequired": true,
+              "confirmationRequired": false,
+              "prompts": {
+                "elicitation": "Elicit.Slot.2785145861.166758040615"
+              }
+            },
+            {
+              "name": "BoardNumber",
+              "type": "AMAZON.NUMBER",
+              "elicitationRequired": false,
+              "confirmationRequired": false,
+              "prompts": {}
+            }
+          ]
+        },
+        {
+          "name": "AddCard",
+          "confirmationRequired": false,
+          "prompts": {},
+          "slots": [
+            {
+              "name": "DueDate",
+              "type": "AMAZON.DATE",
+              "elicitationRequired": false,
+              "confirmationRequired": false,
+              "prompts": {}
+            },
+            {
+              "name": "CardName",
+              "type": "AMAZON.SearchQuery",
+              "elicitationRequired": true,
+              "confirmationRequired": false,
+              "prompts": {
+                "elicitation": "Elicit.Slot.626906640774.1074467740552"
+              }
+            },
+            {
+              "name": "ColumnName",
+              "type": "AMAZON.SearchQuery",
+              "elicitationRequired": true,
+              "confirmationRequired": false,
+              "prompts": {
+                "elicitation": "Elicit.Slot.626906640774.1532383114499"
+              }
+            },
+            {
+              "name": "CardDescription",
+              "type": "AMAZON.SearchQuery",
+              "elicitationRequired": true,
+              "confirmationRequired": false,
+              "prompts": {
+                "elicitation": "Elicit.Slot.626906640774.836747587104"
+              }
+            }
+          ]
+        },
+        {
+          "name": "TasksDue",
+          "confirmationRequired": false,
+          "prompts": {},
+          "slots": [
+            {
+              "name": "DueDate",
+              "type": "AMAZON.DATE",
+              "elicitationRequired": true,
+              "confirmationRequired": false,
+              "prompts": {
+                "elicitation": "Elicit.Slot.662775279528.1370429105496"
+              }
+            }
+          ]
+        },
+        {
+          "name": "MoveCard",
+          "confirmationRequired": false,
+          "prompts": {},
+          "slots": [
+            {
+              "name": "CardName",
+              "type": "AMAZON.SearchQuery",
+              "elicitationRequired": true,
+              "confirmationRequired": false,
+              "prompts": {
+                "elicitation": "Elicit.Slot.816308552226.131650509322"
+              }
+            },
+            {
+              "name": "FromColumn",
+              "type": "AMAZON.SearchQuery",
+              "elicitationRequired": true,
+              "confirmationRequired": false,
+              "prompts": {
+                "elicitation": "Elicit.Slot.816308552226.412093807985"
+              }
+            },
+            {
+              "name": "ToColumn",
+              "type": "AMAZON.SearchQuery",
+              "elicitationRequired": true,
+              "confirmationRequired": false,
+              "prompts": {
+                "elicitation": "Elicit.Slot.816308552226.622754586899"
+              }
+            }
+          ]
+        },
+        {
+          "name": "AddColumn",
+          "confirmationRequired": false,
+          "prompts": {},
+          "slots": [
+            {
+              "name": "ColumnName",
+              "type": "AMAZON.SearchQuery",
+              "elicitationRequired": true,
+              "confirmationRequired": false,
+              "prompts": {
+                "elicitation": "Elicit.Slot.193991365732.1549877221005"
+              }
+            }
+          ]
+        },
+        {
+          "name": "DeleteColumn",
+          "confirmationRequired": true,
+          "prompts": {
+            "confirmation": "Confirm.Intent.481605684842"
+          },
+          "slots": [
+            {
+              "name": "ColumnName",
+              "type": "AMAZON.SearchQuery",
+              "elicitationRequired": true,
+              "confirmationRequired": false,
+              "prompts": {
+                "elicitation": "Elicit.Slot.481605684842.976415806996"
+              }
+            }
+          ]
+        },
+        {
+          "name": "DeleteCard",
+          "confirmationRequired": true,
+          "prompts": {
+            "confirmation": "Confirm.Intent.386099852028"
+          },
+          "slots": [
+            {
+              "name": "CardName",
+              "type": "AMAZON.SearchQuery",
+              "elicitationRequired": true,
+              "confirmationRequired": false,
+              "prompts": {
+                "elicitation": "Elicit.Slot.386099852028.376085543156"
+              }
+            }
+          ]
+        },
+        {
+          "name": "DeleteBoard",
+          "confirmationRequired": true,
+          "prompts": {
+            "confirmation": "Confirm.Intent.128744603761"
+          },
+          "slots": [
+            {
+              "name": "BoardName",
+              "type": "AMAZON.SearchQuery",
+              "elicitationRequired": true,
+              "confirmationRequired": false,
+              "prompts": {
+                "elicitation": "Elicit.Slot.128744603761.378150162245"
+              }
+            }
+          ]
+        },
+        {
+          "name": "AddBoard",
+          "confirmationRequired": false,
+          "prompts": {},
+          "slots": [
+            {
+              "name": "BoardName",
+              "type": "AMAZON.SearchQuery",
+              "elicitationRequired": true,
+              "confirmationRequired": false,
+              "prompts": {
+                "elicitation": "Elicit.Slot.953828698466.745374857640"
+              }
+            }
+          ]
+        }
+      ],
+      "delegationStrategy": "ALWAYS"
+    },
+    "prompts": [
+      {
+        "id": "Confirm.Intent.2785145861",
+        "variations": [
+          {
+            "type": "PlainText",
+            "value": "Please, select a board by it's name."
+          }
+        ]
+      },
+      {
+        "id": "Elicit.Slot.2785145861.166758040615",
+        "variations": [
+          {
+            "type": "PlainText",
+            "value": "Please, select a board by it's name."
+          }
+        ]
+      },
+      {
+        "id": "Elicit.Slot.626906640774.1074467740552",
+        "variations": [
+          {
+            "type": "PlainText",
+            "value": "Please give a card name to your card"
+          },
+          {
+            "type": "PlainText",
+            "value": "Please add a card name to your card"
+          }
+        ]
+      },
+      {
+        "id": "Elicit.Slot.626906640774.836747587104",
+        "variations": [
+          {
+            "type": "PlainText",
+            "value": "Please describe your card in short."
+          },
+          {
+            "type": "PlainText",
+            "value": "Please describe your card briefly."
+          }
+        ]
+      },
+      {
+        "id": "Elicit.Slot.626906640774.1532383114499",
+        "variations": [
+          {
+            "type": "PlainText",
+            "value": "Name a column from your selected board"
+          },
+          {
+            "type": "PlainText",
+            "value": "Please give a column name to add your card to"
+          }
+        ]
+      },
+      {
+        "id": "Elicit.Slot.662775279528.1370429105496",
+        "variations": [
+          {
+            "type": "PlainText",
+            "value": "What day do you want to check for?"
+          },
+          {
+            "type": "PlainText",
+            "value": "What day would you like to check you pending tasks?"
+          }
+        ]
+      },
+      {
+        "id": "Elicit.Slot.816308552226.412093807985",
+        "variations": [
+          {
+            "type": "PlainText",
+            "value": "From what column would you like to move card?"
+          }
+        ]
+      },
+      {
+        "id": "Elicit.Slot.816308552226.622754586899",
+        "variations": [
+          {
+            "type": "PlainText",
+            "value": "To which column would you like to move card?"
+          }
+        ]
+      },
+      {
+        "id": "Elicit.Slot.816308552226.131650509322",
+        "variations": [
+          {
+            "type": "PlainText",
+            "value": "What card would you like to move?"
+          }
+        ]
+      },
+      {
+        "id": "Elicit.Slot.193991365732.1549877221005",
+        "variations": [
+          {
+            "type": "PlainText",
+            "value": "What would you like to name the column?"
+          }
+        ]
+      },
+      {
+        "id": "Elicit.Slot.481605684842.976415806996",
+        "variations": [
+          {
+            "type": "PlainText",
+            "value": "What column would you like to remove?"
+          },
+          {
+            "type": "PlainText",
+            "value": "What column would you like to delete?"
+          }
+        ]
+      },
+      {
+        "id": "Confirm.Slot.481605684842.976415806996",
+        "variations": [
+          {
+            "type": "PlainText",
+            "value": "Are you sure you want to delete {ColumnName} column?"
+          }
+        ]
+      },
+      {
+        "id": "Confirm.Intent.481605684842",
+        "variations": [
+          {
+            "type": "PlainText",
+            "value": "Are you sure you want to remove {ColumnName} column?"
+          },
+          {
+            "type": "PlainText",
+            "value": "Are you sure you want to delete {ColumnName} column?"
+          }
+        ]
+      },
+      {
+        "id": "Elicit.Slot.386099852028.376085543156",
+        "variations": [
+          {
+            "type": "PlainText",
+            "value": "What card would you like to remove?"
+          },
+          {
+            "type": "PlainText",
+            "value": "What card would you like to delete?"
+          }
+        ]
+      },
+      {
+        "id": "Confirm.Intent.386099852028",
+        "variations": [
+          {
+            "type": "PlainText",
+            "value": "Are you sure you want to remove {CardName} card?"
+          },
+          {
+            "type": "PlainText",
+            "value": "Are you sure you want to delete {CardName} card?"
+          }
+        ]
+      },
+      {
+        "id": "Elicit.Slot.128744603761.378150162245",
+        "variations": [
+          {
+            "type": "PlainText",
+            "value": "What board would you like to delete?"
+          },
+          {
+            "type": "PlainText",
+            "value": "What board would you like to remove?"
+          }
+        ]
+      },
+      {
+        "id": "Confirm.Intent.128744603761",
+        "variations": [
+          {
+            "type": "PlainText",
+            "value": "Are you sure you want to delete {BoardName} board?"
+          },
+          {
+            "type": "PlainText",
+            "value": "Are you sure you want to remove {BoardName} board?"
+          }
+        ]
+      },
+      {
+        "id": "Elicit.Slot.953828698466.745374857640",
+        "variations": [
+          {
+            "type": "PlainText",
+            "value": "Please, state the board name you want to add."
+          },
+          {
+            "type": "PlainText",
+            "value": "Name the board you would like to add."
+          }
+        ]
+      }
+    ]
+  },
+  "version": "29"
+}

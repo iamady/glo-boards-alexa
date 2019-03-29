@@ -1,0 +1,32 @@
+{
+  "name": "glo-boards-alexa",
+  "version": "1.0.0",
+  "description": "This is an alexa extension to manage GitKraken Glo Boards",
+  "main": "index.js",
+  "dependencies": {
+    "alexa-sdk": "^1.0.25",
+    "http": "^0.0.0",
+    "https": "^1.0.0",
+    "request": "^2.88.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/iamady/glo-boards-alexa.git"
+  },
+  "keywords": [
+    "alexa",
+    "nodejs",
+    "gitkraken",
+    "gitkraken-glo"
+  ],
+  "author": "Aditya Shinde",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/iamady/glo-boards-alexa/issues"
+  },
+  "homepage": "https://github.com/iamady/glo-boards-alexa#readme"
+}

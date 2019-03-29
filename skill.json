@@ -1,0 +1,57 @@
+{
+  "manifest": {
+    "manifestVersion": "1.0",
+    "privacyAndCompliance": {
+      "locales": {
+        "en-US": {
+          "privacyPolicyUrl": "https://github.com/iamady/glo-boards-alexa/wiki/Privacy-Policy"
+        }
+      },
+      "allowsPurchases": false,
+      "usesPersonalInfo": false,
+      "isChildDirected": false,
+      "isExportCompliant": true,
+      "containsAds": false
+    },
+    "publishingInformation": {
+      "locales": {
+        "en-US": {
+          "name": "GitKraken Glo Boards",
+          "smallIconUri": "https://s3.amazonaws.com/CAPS-SSE/echo_developer/4300/92fcd4cdc8514ae6bd23759c9788df32/APP_ICON?versionId=PcYIy8a3_zdLEx0yeNt.43kqUNFPoBUm&AWSAccessKeyId=AKIAJFEYRBGIHK2BBYKA&Expires=1553935444&Signature=DY7%2BLE6abNgymRLwbVuAOSAX%2FVs%3D",
+          "largeIconUri": "https://s3.amazonaws.com/CAPS-SSE/echo_developer/37d1/c7ced1d4d2664c46a992401534a4562b/APP_ICON_LARGE?versionId=i3pkb5nErf55FVOBi.biLwdbpRVZ6Qi0&AWSAccessKeyId=AKIAJFEYRBGIHK2BBYKA&Expires=1553935444&Signature=gWmKaPYgRNYJescZjbvDoDj8qx8%3D",
+          "summary": "This is an Alexa extension to manage GitKraken Glo Boards",
+          "description": "The GitKraken Glo Boards Alexa helps you by providing a platform to create, manage and keep tracks of you daily tasks.\nA handy tool to get updates on Glo boards on Alexa with your voice.\nThings you can do right now with Glo Boards Alexa :\n- List, Create, Select, Delete Boards\n- List, Create, Delete Columns\n- Create, Delete and List cards due for a particular date like today.\n- And obviously Sign in to your account.",
+          "examplePhrases": [
+            "Alexa, open Glow Boards.",
+            "Alexa, ask Glow Boards for tasks due today.",
+            "Alexa, ask Glow Boards to add a card very important feature."
+          ],
+          "keywords": [
+            "gitkraken",
+            "glo",
+            "boards",
+            "glow",
+            "boards",
+            "gitkraken",
+            "glo",
+            "kanban",
+            "todo",
+            "trello",
+            "alexa",
+            "board",
+            "scrum",
+            "agile",
+            "asana",
+            "cards",
+            "columns"
+          ],
+          "updatesDescription": "Initial Release :\n- Account Linking with GitKraken Glo Boards\n- List, Create, Select, Delete Boards\n- List, Create, Delete Columns\n- Create, Delete and List cards due for a particular date like today\n- More features coming soon!"
+        }
+      },
+      "isAvailableWorldwide": true,
+      "testingInstructions": "You can start the testing after obtaining gitkraken accessToken by following the Sign in functions :\nSignIn - sign in\nRest of the actions can be completed after obtaining gitkraken accessToken : \nListBoards - list all boards\nSelectBoard - select a board\nAddBoard - add a board\nDeleteBoard - delete a board\nListColumns - list columns\nAddColumn - add a column\nDeleteColumn - delete a column\nAddCard - add a card\nMoveCard - move a card\nDeleteCard - delete a card\nTasksDue - tasks due",
+      "category": "ORGANIZERS_AND_ASSISTANTS",
+      "distributionCountries": []
+    }
+  }
+}
