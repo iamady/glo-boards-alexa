@@ -1,4 +1,4 @@
-# GitKraken Glo Boards for Alexa ![GitHub] (https://img.shields.io/github/license/iamady/glo-boards-alexa.svg) 
+# GitKraken Glo Boards for Alexa ![GitHub](https://img.shields.io/github/license/iamady/glo-boards-alexa.svg) 
 
 ## Development
 ```sh
