@@ -79,7 +79,7 @@ const handlers = {
                     }
                     else if(response.statusCode == 200){
                         var boardNames = [];
-                        if(!isEmpty(data)){
+                        if(!isEmpty(data) && typeof this.attributes['currentBoardName'] !== 'undefined'){
                             for(var i=0;i<data.length;i++){
                                 boardNames.push(data[i].name.toLowerCase());
                             }
@@ -803,9 +803,9 @@ const handlers = {
             this.emit(':tellWithLinkAccountCard', 'Please, link your GitKraken account by opening the Alexa app on your mobile device.');
         }
 
-        if(typeof this.attributes['currentBoardID'] === 'undefined'){
-            this.emit("SelectBoard");
-        }
+        // if(typeof this.attributes['currentBoardID'] === 'undefined'){
+        //     this.emit("SelectBoard");
+        // }
         //delegate to Alexa to collect all the required slot values
        let filledSlots = delegateSlotCollection.call(this);
         speechOutput = '';
