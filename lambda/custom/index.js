@@ -1042,68 +1042,75 @@ const handlers = {
                         var setCol = 0;
                         boardNames.push(data[i].name.toLowerCase());
                         set++;
-                        for(var j=0;j<data[i].columns.length;j++){
-                            //for loop - columns
-                            columnNames.push(data[i].columns[j].name.toLowerCase());
-                            setCol++;
-                            if(data[i].name.toLowerCase() === this.attributes['currentBoardName'] && data[i].columns[j].name.toLowerCase() === ColumnNameSlotRaw.toLowerCase()){    
-                                var datastring = '{\"name\": \"'+CardNameSlotRaw+'\",\"description\": {\"text\": \"'+CardDescriptionSlotRaw+'\"},\"column_id\": \"'+data[i].columns[j].id+'\"}';
-                                ColumnName = data[i].columns[j].name;
-                                var optionspost2 = {
-                                    url : 'https://gloapi.gitkraken.com/v1/glo/boards/'+this.attributes["currentBoardID"]+'/cards',
-                                    method : 'POST',
-                                    headers : reqheaders,
-                                    body: datastring
-                                };
-                                console.log("BoardID:" + this.attributes['currentBoardID']);
-                                var that = this;
-                                http2.post(optionspost2, callback);
-                                function callback(err,res,body2){
-                                    // body2 = "";
-                                    // res.on('data', (chunk) => { body2 += chunk })
-                                    // res.on('end', () => {
-                                    console.log("Status Code: "+res.statusCode);
-                                    if(!err && res.statusCode == 201 && body2){
-                                        data2 = JSON.parse(body2);
-                                        console.log('Data2: '+JSON.stringify(data2));
-                                        console.log("Post Options: "+JSON.stringify(optionspost2));
-                                        if(typeof that.attributes["currentUserID"] === 'undefined'){
-                                            that.attributes["currentUserID"] = data2.created_by.id;
+                        if(data[i].columns.length > 0){
+                            for(var j=0;j<data[i].columns.length;j++){
+                                //for loop - columns
+                                columnNames.push(data[i].columns[j].name.toLowerCase());
+                                setCol++;
+                                if(data[i].name.toLowerCase() === this.attributes['currentBoardName'] && data[i].columns[j].name.toLowerCase() === ColumnNameSlotRaw.toLowerCase()){    
+                                    var datastring = '{\"name\": \"'+CardNameSlotRaw+'\",\"description\": {\"text\": \"'+CardDescriptionSlotRaw+'\"},\"column_id\": \"'+data[i].columns[j].id+'\"}';
+                                    ColumnName = data[i].columns[j].name;
+                                    var optionspost2 = {
+                                        url : 'https://gloapi.gitkraken.com/v1/glo/boards/'+this.attributes["currentBoardID"]+'/cards',
+                                        method : 'POST',
+                                        headers : reqheaders,
+                                        body: datastring
+                                    };
+                                    console.log("BoardID:" + this.attributes['currentBoardID']);
+                                    var that = this;
+                                    http2.post(optionspost2, callback);
+                                    function callback(err,res,body2){
+                                        // body2 = "";
+                                        // res.on('data', (chunk) => { body2 += chunk })
+                                        // res.on('end', () => {
+                                        console.log("Status Code: "+res.statusCode);
+                                        if(!err && res.statusCode == 201 && body2){
+                                            data2 = JSON.parse(body2);
+                                            console.log('Data2: '+JSON.stringify(data2));
+                                            console.log("Post Options: "+JSON.stringify(optionspost2));
+                                            if(typeof that.attributes["currentUserID"] === 'undefined'){
+                                                that.attributes["currentUserID"] = data2.created_by.id;
+                                            }
+                                            // code
+                                            console.log('Success: '+CardNameSlotRaw+' ColumnName: '+ColumnName);
+                                            speechOutput = "Your card "+CardNameSlotRaw+" has been added to column "+ColumnName+" successfully. "+nextInvocation[Math.floor(Math.random()*nextInvocation.length)];
+                                            that.emit(':askWithCard', speechOutput, reprompt, cardTitle, speechOutput);
+                                            console.log('Successful execution');
                                         }
-                                        // code
-                                        console.log('Success: '+CardNameSlotRaw+' ColumnName: '+ColumnName);
-                                        speechOutput = "Your card "+CardNameSlotRaw+" has been added to column "+ColumnName+" successfully. "+nextInvocation[Math.floor(Math.random()*nextInvocation.length)];
-                                        that.emit(':askWithCard', speechOutput, reprompt, cardTitle, speechOutput);
-                                        console.log('Successful execution');
-                                    }
-                                    // Check for Authentication
-                                    else if(!err && res.statusCode == 401){
-                                        // that.emit('SignIn');
-                                        speechOutput = 'Welcome to Glo Boards! Please, link your account by opening the Alexa app on your mobile device.';
-                                        //any intent slot variables are listed here for convenience
-                                        that.emit(':tell', speechOutput, 'Please, link your GitKraken account by opening the Alexa app on your mobile device.');
-                                        that.emit(':tellWithLinkAccountCard', 'Please, link your GitKraken account by opening the Alexa app on your mobile device.');
-                                    }
-                                    else{
-                                        // code
-                                        speechOutput = "Sorry something went wrong. To try again say add a card.";
-                                        that.emit(':askWithCard', speechOutput, reprompt, cardTitle, speechOutput);
-                                    }
-                                    // this.emit(':askWithCard', speechOutput, reprompt, cardTitle, speechOutput);
-                                    // });
-                                }   
-                            }
-                            else if(!(boardNames.indexOf(data[i].name.toLowerCase()) > -1) && !(columnNames.indexOf(ColumnNameSlotRaw.toLowerCase()) > -1) && setCol === data[i].columns.length && set === data.length){
-                                //cannot find column - Check does not work
-                                speechOutput = "Your card "+CardNameSlotRaw+" cannot be created, as column "+ColumnNameSlotRaw+" was not found. "+nextInvocation[Math.floor(Math.random()*nextInvocation.length)];
-                                this.emit(':askWithCard', speechOutput, reprompt, cardTitle, speechOutput);
-                            }
-                            else if((boardNames.indexOf(data[i].name.toLowerCase()) > -1) && !(columnNames.indexOf(ColumnNameSlotRaw.toLowerCase()) > -1) && setCol === data[i].columns.length && set === data.length){
-                                //cannot find column - Check does not work
-                                speechOutput = "Your card "+CardNameSlotRaw+" cannot be created, as column "+ColumnNameSlotRaw+" was not found. "+nextInvocation[Math.floor(Math.random()*nextInvocation.length)];
-                                this.emit(':askWithCard', speechOutput, reprompt, cardTitle, speechOutput);
-                            }
-                        }// for loop columns
+                                        // Check for Authentication
+                                        else if(!err && res.statusCode == 401){
+                                            // that.emit('SignIn');
+                                            speechOutput = 'Welcome to Glo Boards! Please, link your account by opening the Alexa app on your mobile device.';
+                                            //any intent slot variables are listed here for convenience
+                                            that.emit(':tell', speechOutput, 'Please, link your GitKraken account by opening the Alexa app on your mobile device.');
+                                            that.emit(':tellWithLinkAccountCard', 'Please, link your GitKraken account by opening the Alexa app on your mobile device.');
+                                        }
+                                        else{
+                                            // code
+                                            speechOutput = "Sorry something went wrong. To try again say add a card.";
+                                            that.emit(':askWithCard', speechOutput, reprompt, cardTitle, speechOutput);
+                                        }
+                                        // this.emit(':askWithCard', speechOutput, reprompt, cardTitle, speechOutput);
+                                        // });
+                                    }   
+                                }
+                                else if(!(boardNames.indexOf(data[i].name.toLowerCase()) > -1) && !(columnNames.indexOf(ColumnNameSlotRaw.toLowerCase()) > -1) && setCol === data[i].columns.length && set === data.length){
+                                    //cannot find column - Check does not work
+                                    speechOutput = "Your card "+CardNameSlotRaw+" cannot be created, as column "+ColumnNameSlotRaw+" was not found. "+nextInvocation[Math.floor(Math.random()*nextInvocation.length)];
+                                    this.emit(':askWithCard', speechOutput, reprompt, cardTitle, speechOutput);
+                                }
+                                else if((boardNames.indexOf(data[i].name.toLowerCase()) > -1) && !(columnNames.indexOf(ColumnNameSlotRaw.toLowerCase()) > -1) && setCol === data[i].columns.length && set === data.length){
+                                    //cannot find column - Check does not work
+                                    speechOutput = "Your card "+CardNameSlotRaw+" cannot be created, as column "+ColumnNameSlotRaw+" was not found. "+nextInvocation[Math.floor(Math.random()*nextInvocation.length)];
+                                    this.emit(':askWithCard', speechOutput, reprompt, cardTitle, speechOutput);
+                                }
+                            }// for loop columns
+                        }// if before column loop
+                        else {
+                            //cannot find column - Check does not work
+                            speechOutput = "You don't have any column named "+ColumnNameSlotRaw+" in your board "+this.attributes['currentBoardName']+". Please, say 'add a column' to create column "+ColumnNameSlotRaw+". "+nextInvocation[Math.floor(Math.random()*nextInvocation.length)];
+                            this.emit(':askWithCard', speechOutput, reprompt, cardTitle, speechOutput);
+                        }
                     }// for loop boards
                     // speechOutput = "These are the following boards "+string+". To select a board say, Select board name.";
                     // this.emit(':askWithCard', speechOutput, reprompt, cardTitle, speechOutput);
@@ -1382,7 +1389,7 @@ const handlers = {
         // }
 
         //delegate to Alexa to collect all the required slot values
-       let filledSlots = delegateSlotCollection.call(this);
+        let filledSlots = delegateSlotCollection.call(this);
         speechOutput = '';
         //any intent slot variables are listed here for convenience
 
@@ -1443,7 +1450,8 @@ const handlers = {
                         console.log("Set: "+set);
                         console.log("Card Len: "+data.length);
                         console.log("Card Name: "+cardNames);
-                        if(data[i].name.toLowerCase() === CardNameSlotRaw.toLowerCase() && this.event.request.intent.confirmationStatus === 'CONFIRMED'){
+                        console.log("Data Name: "+data[i].name.toLowerCase());
+                        if(data[i].name.toLowerCase() == CardNameSlotRaw.toLowerCase() && data[i].board_id == this.attributes["currentBoardID"] && this.event.request.intent.confirmationStatus === 'CONFIRMED'){
                             var optionspost2 = {
                                 url : 'https://gloapi.gitkraken.com/v1/glo/boards/'+this.attributes["currentBoardID"]+'/cards/'+data[i].id,
                                 method : 'DELETE',
@@ -1502,7 +1510,7 @@ const handlers = {
                                 // });
                             }
                         }
-                        else if(data[i].name.toLowerCase() === CardNameSlotRaw.toLowerCase() && this.event.request.intent.confirmationStatus !== 'CONFIRMED'){
+                        else if(data[i].name.toLowerCase() == CardNameSlotRaw.toLowerCase() && this.event.request.intent.confirmationStatus !== 'CONFIRMED'){
                             console.log("Found Name: "+data[i].name.toLowerCase());
                             console.log("Entered Name: "+CardNameSlotRaw.toLowerCase());
                             speechOutput = "Cancelled deleting card "+CardNameSlotRaw+". "+nextInvocation[Math.floor(Math.random()*nextInvocation.length)];
@@ -1718,7 +1726,7 @@ const handlers = {
 
 
 		//Your custom intent handling goes here
-		speechOutput = "Welcome to Glo Boards. "+nextInvocation[Math.floor(Math.random()*nextInvocation.length)];
+		speechOutput = "Sorry I did not understand that, ask for help to explore more options. "+nextInvocation[Math.floor(Math.random()*nextInvocation.length)];
         reprompt = nextInvocation[Math.floor(Math.random()*nextInvocation.length)]+" Ask for help to explore more options.";
         cardTitle = "Glo Home.";
         this.emit(":askWithCard", speechOutput, reprompt, cardTitle, speechOutput);
