@@ -1,14 +1,17 @@
 # GitKraken Glo Boards for Alexa ![GitHub](https://img.shields.io/github/license/iamady/glo-boards-alexa.svg) 
 
+## Installation
+GitKraken Glo Boards is available on Alexa for [Beta Test](https://amzn.to/2CXYLvt)
+
 ## Development
 ```sh
 git clone https://github.com/iamady/glo-boards-alexa.git
 cd glo-boards-alexa/lambda/custom/
 npm install
 ```
-  Pack index.js and node_modules together in a <YourZipFileName>.zip file.
-  AWS CLI [Setup Tutorial](https://www.youtube.com/watch?v=abv_1PiM40w)
-  After Setup is complete run command below wih correct parameters.
+* Pack index.js and node_modules together in a <YourZipFileName>.zip file.
+* AWS CLI [Setup Tutorial](https://www.youtube.com/watch?v=abv_1PiM40w)
+* After Setup is complete run command below wih correct parameters.
 ```sh
 aws lambda update-function-code --function-name <YourFunctionName> --zip-file fileb://./<YourZipFileName>.zip --publish
 ```
