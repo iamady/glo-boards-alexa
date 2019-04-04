@@ -297,28 +297,35 @@ const handlers = {
                 }
                 data = JSON.parse(body);
                 console.log("User Board: "+BoardNameSlotRaw.toLowerCase());
-                for(var i=0;i<data.length;i++){
-                    boardNames.push(data[i].name.toLowerCase());
-                    console.log("Board Name: "+data[i].name.toLowerCase());
-                    // console.log("Board Name: "+data[i].id);
-                    if(data[i].name.toLowerCase() == BoardNameSlotRaw.toLowerCase()){
-                        this.attributes['currentBoardID'] = data[i].id;
-                        this.attributes['currentBoardName'] = data[i].name.toLowerCase();
-                        console.log("Current BoardName: "+this.attributes['currentBoardName']);
-                        speechOutput = "You have selected "+BoardNameSlotRaw+". "+nextInvocation[Math.floor(Math.random()*nextInvocation.length)];
-                        reprompt = "You can select an action to perform on "+BoardNameSlotRaw+" project. Say 'help' to learn more actions.";
+                if(data.length > 0){
+                    for(var i=0;i<data.length;i++){
+                        boardNames.push(data[i].name.toLowerCase());
+                        console.log("Board Name: "+data[i].name.toLowerCase());
+                        // console.log("Board Name: "+data[i].id);
+                        if(data[i].name.toLowerCase() == BoardNameSlotRaw.toLowerCase()){
+                            this.attributes['currentBoardID'] = data[i].id;
+                            this.attributes['currentBoardName'] = data[i].name.toLowerCase();
+                            console.log("Current BoardName: "+this.attributes['currentBoardName']);
+                            speechOutput = "You have selected "+BoardNameSlotRaw+". "+nextInvocation[Math.floor(Math.random()*nextInvocation.length)];
+                            reprompt = "You can select an action to perform on "+BoardNameSlotRaw+" project. Say 'help' to learn more actions.";
+                            this.emit(':askWithCard', speechOutput, reprompt, cardTitle, speechOutput);
+                        }
+                    }
+                    if(typeof BoardNameSlotRaw !== 'undefined' || BoardNameSlotRaw !== ''){
+                        this.emit("ListBoards");
+                    }
+                    else if(!(boardNames.indexOf(BoardNameSlotRaw) > -1)){
+                        speechOutput = "No board named "+BoardNameSlotRaw+" exists. "+nextInvocation[Math.floor(Math.random()*nextInvocation.length)];
+                        reprompt = nextInvocation[Math.floor(Math.random()*nextInvocation.length)]+" Ask for help to explore more options.";
                         this.emit(':askWithCard', speechOutput, reprompt, cardTitle, speechOutput);
                     }
                 }
-                
-                if(typeof BoardNameSlotRaw !== 'undefined' || BoardNameSlotRaw !== ''){
-                    this.emit("ListBoards");
-                }
-                else if(!(boardNames.indexOf(BoardNameSlotRaw) > -1)){
-                    speechOutput = "No board named "+BoardNameSlotRaw+" exists. "+nextInvocation[Math.floor(Math.random()*nextInvocation.length)];
-                    reprompt = nextInvocation[Math.floor(Math.random()*nextInvocation.length)]+" Ask for help to explore more options.";
+                else{
+                    speechOutput = "No boards exist in your account. Say 'add board' to create a board. "+nextInvocation[Math.floor(Math.random()*nextInvocation.length)];
                     this.emit(':askWithCard', speechOutput, reprompt, cardTitle, speechOutput);
                 }
+                
+                
                 // string = '';
                 // for(var i=0;i<data.length;i++){
                 //     if(i>0){
@@ -496,89 +503,103 @@ const handlers = {
                     console.log('Data: '+JSON.stringify(data));
                     var boardNames = [];
                     var set = 0;
-                    for(var i=0;i<data.length;i++){
-                        set++;
-                        boardNames.push(data[i].name.toLowerCase());
-                        // console.log("Set Cnt: "+set);
-                        // console.log("Board Cnt: "+data.length);
-                        // console.log("Boards : "+boardNames);
-                        if(data[i].name.toLowerCase() === BoardNameSlotRaw.toLowerCase() && this.event.request.intent.confirmationStatus === 'CONFIRMED'){
-                            var optionspost2 = {
-                                url : 'https://gloapi.gitkraken.com/v1/glo/boards/'+data[i].id,
-                                method : 'DELETE',
-                                headers : reqheaders2
-                            };
-                            // console.log("BoardID: "+data[i].id);
-                            // console.log("BoardName:" + BoardNameSlotRaw);
-                            var that = this;
-                            http2.del(optionspost2, callback);
-                            function callback(err,res,body2){
-                                // body2 = "";
-                                // res.on('data', (chunk) => { body2 += chunk })
-                                // res.on('end', () => {
-                                console.log("Status Code: "+res.statusCode);
-                                if(!err && res.statusCode == 204 ){
-                                    // data2 = JSON.parse(body2);
-                                    // console.log('Data2: '+JSON.stringify(data2));
-                                    console.log("Post Options: "+JSON.stringify(optionspost2));
-                                    // code
-                                    // console.log('Success: '+CardNameSlotRaw+' ColumnName: '+ColumnName);
-                                    speechOutput = "Your board "+BoardNameSlotRaw+" has been deleted successfully. "+nextInvocation[Math.floor(Math.random()*nextInvocation.length)];
-                                    that.emit(':askWithCard', speechOutput, reprompt, cardTitle, speechOutput);
-                                    // console.log('Successful execution');
+                    if(data.length > 0){
+                        for(var i=0;i<data.length;i++){
+                            set++;
+                            boardNames.push(data[i].name.toLowerCase());
+                            // console.log("Set Cnt: "+set);
+                            // console.log("Board Cnt: "+data.length);
+                            // console.log("Boards : "+boardNames);
+                            if(data[i].name.toLowerCase() === BoardNameSlotRaw.toLowerCase() && this.event.request.intent.confirmationStatus === 'CONFIRMED'){
+                                var optionspost2 = {
+                                    url : 'https://gloapi.gitkraken.com/v1/glo/boards/'+data[i].id,
+                                    method : 'DELETE',
+                                    headers : reqheaders2
+                                };  
+                                // console.log("BoardID: "+data[i].id);
+                                // console.log("BoardName:" + BoardNameSlotRaw);
+                                var that = this;
+                                http2.del(optionspost2, callback);
+                                function callback(err,res,body2){
+                                    // body2 = "";
+                                    // res.on('data', (chunk) => { body2 += chunk })
+                                    // res.on('end', () => {
+                                    console.log("Status Code: "+res.statusCode);
+                                    if(!err && res.statusCode == 204 ){
+                                        // data2 = JSON.parse(body2);
+                                        // console.log('Data2: '+JSON.stringify(data2));
+                                        console.log("Post Options: "+JSON.stringify(optionspost2));
+                                        // code
+                                        // console.log('Success: '+CardNameSlotRaw+' ColumnName: '+ColumnName);
+                                        if(BoardNameSlotRaw.toLowerCase() === that.attributes['currentBoardName'].toLowerCase()){
+                                            that.attributes['currentBoardName'] = undefined;
+                                            that.attributes['currentBoardID'] = undefined;
+                                            speechOutput = "Your board "+BoardNameSlotRaw+" has been deleted successfully. "+nextInvocation[Math.floor(Math.random()*nextInvocation.length)];
+                                            that.emit(':askWithCard', speechOutput, reprompt, cardTitle, speechOutput);
+                                        }
+                                        else{
+                                            speechOutput = "Your board "+BoardNameSlotRaw+" has been deleted successfully. "+nextInvocation[Math.floor(Math.random()*nextInvocation.length)];
+                                            that.emit(':askWithCard', speechOutput, reprompt, cardTitle, speechOutput);
+                                        }
+                                        // console.log('Successful execution');
+                                    }
+                                    else if(!err && res.statusCode == 400 ){
+                                        // data2 = JSON.parse(body2);
+                                        // console.log('Data2: '+JSON.stringify(data2));
+                                        console.log("Post Options: "+JSON.stringify(optionspost2));
+                                        speechOutput = "Board "+BoardNameSlotRaw+" is not valid, please check your board name. "+nextInvocation[Math.floor(Math.random()*nextInvocation.length)];
+                                        that.emit(':askWithCard', speechOutput, reprompt, cardTitle, speechOutput);
+                                    }
+                                    else if(!err && res.statusCode == 404 ){
+                                        // data2 = JSON.parse(body2);
+                                        // console.log('Data2: '+JSON.stringify(data2));
+                                        console.log("Post Options: "+JSON.stringify(optionspost2));
+                                        speechOutput = "Cannot find Board "+BoardNameSlotRaw+", please check your board name. "+nextInvocation[Math.floor(Math.random()*nextInvocation.length)];
+                                        that.emit(':askWithCard', speechOutput, reprompt, cardTitle, speechOutput);
+                                    }
+                                    // Check for Authentication
+                                    else if(!err && res.statusCode == 401){
+                                        // that.emit('SignIn');
+                                        speechOutput = 'Welcome to Glo Boards! Please, link your account by opening the Alexa app on your mobile device.';
+                                        //any intent slot variables are listed here for convenience
+                                        that.emit(':tell', speechOutput, 'Please, link your GitKraken account by opening the Alexa app on your mobile device.');
+                                        that.emit(':tellWithLinkAccountCard', 'Please, link your GitKraken account by opening the Alexa app on your mobile device.');
+                                    }
+                                    else{
+                                        // code
+                                        // data2 = JSON.parse(body2);
+                                        // console.log('Data2: '+JSON.stringify(data2));
+                                        console.log("Post Options: "+JSON.stringify(optionspost2));
+                                        speechOutput = "Sorry something went wrong. To try again say delete a board. "+nextInvocation[Math.floor(Math.random()*nextInvocation.length)];
+                                        that.emit(':askWithCard', speechOutput, reprompt, cardTitle, speechOutput);
+                                    }
+                                    // this.emit(':askWithCard', speechOutput, reprompt, cardTitle, speechOutput);
+                                    // });
                                 }
-                                else if(!err && res.statusCode == 400 ){
-                                    // data2 = JSON.parse(body2);
-                                    // console.log('Data2: '+JSON.stringify(data2));
-                                    console.log("Post Options: "+JSON.stringify(optionspost2));
-                                    speechOutput = "Board "+BoardNameSlotRaw+" is not valid, please check your board name. "+nextInvocation[Math.floor(Math.random()*nextInvocation.length)];
-                                    that.emit(':askWithCard', speechOutput, reprompt, cardTitle, speechOutput);
-                                }
-                                else if(!err && res.statusCode == 404 ){
-                                    // data2 = JSON.parse(body2);
-                                    // console.log('Data2: '+JSON.stringify(data2));
-                                    console.log("Post Options: "+JSON.stringify(optionspost2));
-                                    speechOutput = "Cannot find Board "+BoardNameSlotRaw+", please check your board name. "+nextInvocation[Math.floor(Math.random()*nextInvocation.length)];
-                                    that.emit(':askWithCard', speechOutput, reprompt, cardTitle, speechOutput);
-                                }
-                                // Check for Authentication
-                                else if(!err && res.statusCode == 401){
-                                    // that.emit('SignIn');
-                                    speechOutput = 'Welcome to Glo Boards! Please, link your account by opening the Alexa app on your mobile device.';
-                                    //any intent slot variables are listed here for convenience
-                                    that.emit(':tell', speechOutput, 'Please, link your GitKraken account by opening the Alexa app on your mobile device.');
-                                    that.emit(':tellWithLinkAccountCard', 'Please, link your GitKraken account by opening the Alexa app on your mobile device.');
-                                }
-                                else{
-                                    // code
-                                    // data2 = JSON.parse(body2);
-                                    // console.log('Data2: '+JSON.stringify(data2));
-                                    console.log("Post Options: "+JSON.stringify(optionspost2));
-                                    speechOutput = "Sorry something went wrong. To try again say delete a board. "+nextInvocation[Math.floor(Math.random()*nextInvocation.length)];
-                                    that.emit(':askWithCard', speechOutput, reprompt, cardTitle, speechOutput);
-                                }
-                                // this.emit(':askWithCard', speechOutput, reprompt, cardTitle, speechOutput);
-                                // });
                             }
-                        }
-                        else if(data[i].name.toLowerCase() === BoardNameSlotRaw.toLowerCase() && this.event.request.intent.confirmationStatus !== 'CONFIRMED'){
-                            console.log("Found Name: "+data[i].name.toLowerCase());
-                            console.log("Entered Name: "+BoardNameSlotRaw.toLowerCase());
-                            speechOutput = "Cancelled deleting board "+BoardNameSlotRaw+". "+nextInvocation[Math.floor(Math.random()*nextInvocation.length)];
-                            this.emit(':askWithCard', speechOutput, reprompt, cardTitle, speechOutput);
-                        }
-                        else if(this.event.request.intent.confirmationStatus === 'CONFIRMED' && !(boardNames.indexOf(BoardNameSlotRaw.toLowerCase()) > -1) && set === data.length){
-                            console.log("Found Name: "+data[i].name.toLowerCase());
-                            console.log("Entered Name: "+BoardNameSlotRaw.toLowerCase());
-                            speechOutput = "Cannot find Board "+BoardNameSlotRaw+", please check if your board "+BoardNameSlotRaw+" exists. "+nextInvocation[Math.floor(Math.random()*nextInvocation.length)];
-                            this.emit(':askWithCard', speechOutput, reprompt, cardTitle, speechOutput);
-                        }
-                        else if(this.event.request.intent.confirmationStatus !== 'CONFIRMED' && !(boardNames.indexOf(BoardNameSlotRaw.toLowerCase()) > -1) && set === data.length){
-                            console.log("Found Name: "+data[i].name.toLowerCase());
-                            console.log("Entered Name: "+BoardNameSlotRaw.toLowerCase());
-                            speechOutput = "Cancelled deleting board "+BoardNameSlotRaw+", please check if your board "+BoardNameSlotRaw+" exists. "+nextInvocation[Math.floor(Math.random()*nextInvocation.length)];
-                            this.emit(':askWithCard', speechOutput, reprompt, cardTitle, speechOutput);
-                        }
+                            else if(data[i].name.toLowerCase() === BoardNameSlotRaw.toLowerCase() && this.event.request.intent.confirmationStatus !== 'CONFIRMED'){
+                                console.log("Found Name: "+data[i].name.toLowerCase());
+                                console.log("Entered Name: "+BoardNameSlotRaw.toLowerCase());
+                                speechOutput = "Cancelled deleting board "+BoardNameSlotRaw+". "+nextInvocation[Math.floor(Math.random()*nextInvocation.length)];
+                                this.emit(':askWithCard', speechOutput, reprompt, cardTitle, speechOutput);
+                            }
+                            else if(this.event.request.intent.confirmationStatus === 'CONFIRMED' && !(boardNames.indexOf(BoardNameSlotRaw.toLowerCase()) > -1) && set === data.length){
+                                console.log("Found Name: "+data[i].name.toLowerCase());
+                                console.log("Entered Name: "+BoardNameSlotRaw.toLowerCase());
+                                speechOutput = "Cannot find Board "+BoardNameSlotRaw+", please check if your board "+BoardNameSlotRaw+" exists. "+nextInvocation[Math.floor(Math.random()*nextInvocation.length)];
+                                this.emit(':askWithCard', speechOutput, reprompt, cardTitle, speechOutput);
+                            }
+                            else if(this.event.request.intent.confirmationStatus !== 'CONFIRMED' && !(boardNames.indexOf(BoardNameSlotRaw.toLowerCase()) > -1) && set === data.length){
+                                console.log("Found Name: "+data[i].name.toLowerCase());
+                                console.log("Entered Name: "+BoardNameSlotRaw.toLowerCase());
+                                speechOutput = "Cancelled deleting board "+BoardNameSlotRaw+", please check if your board "+BoardNameSlotRaw+" exists. "+nextInvocation[Math.floor(Math.random()*nextInvocation.length)];
+                                this.emit(':askWithCard', speechOutput, reprompt, cardTitle, speechOutput);
+                            }
+                        }// for close
+                    }// if close
+                    else{
+                        speechOutput = "No Boards were found in your GitKraken Glo account. "+nextInvocation[Math.floor(Math.random()*nextInvocation.length)];
+                        this.emit(':askWithCard', speechOutput, reprompt, cardTitle, speechOutput);
                     }
                 }); //res end close
 
@@ -864,14 +885,14 @@ const handlers = {
                     console.log('Data: '+JSON.stringify(data));
                     var columnNames = [];
                     var set = 0;
-                    for(var i=0;i<data.columns.length;i++){
-                        if(data.name.toLowerCase() === this.attributes['currentBoardName'].toLowerCase()){
-                            // for(var j=0;j<data[i].columns.length;j++){
+                    if(data.columns.length > 0){
+                        for(var i=0;i<data.columns.length;i++){
+                            if(data.name.toLowerCase() === this.attributes['currentBoardName'].toLowerCase()){
                                 set++;
                                 columnNames.push(data.columns[i].name.toLowerCase());
-                                // console.log("Set: "+set);
-                                // console.log("Column Len: "+data.columns.length);
-                                // console.log("Column Name: "+columnNames);
+                                console.log("Set: "+set);
+                                console.log("Column Len: "+data.columns.length);
+                                console.log("Column Name: "+columnNames);
                                 if(data.columns[i].name.toLowerCase() === ColumnNameSlotRaw.toLowerCase() && this.event.request.intent.confirmationStatus === 'CONFIRMED'){
                                     var optionspost2 = {
                                         url : 'https://gloapi.gitkraken.com/v1/glo/boards/'+this.attributes["currentBoardID"]+'/columns/'+data.columns[i].id,
@@ -884,8 +905,6 @@ const handlers = {
                                     http2.del(optionspost2, callback);
                                     function callback(err,res,body2){
                                         // body2 = "";
-                                        // res.on('data', (chunk) => { body2 += chunk })
-                                        // res.on('end', () => {
                                         console.log("Status Code: "+res.statusCode);
                                         if(!err && res.statusCode == 204 ){
                                             // data2 = JSON.parse(body2);
@@ -949,8 +968,12 @@ const handlers = {
                                     speechOutput = "Cancelled deleting column "+ColumnNameSlotRaw+", please check if your column name exists in "+this.attributes['currentBoardName']+". "+nextInvocation[Math.floor(Math.random()*nextInvocation.length)];
                                     this.emit(':askWithCard', speechOutput, reprompt, cardTitle, speechOutput);
                                 }
-                            // }
-                        }
+                            }
+                        }// for column close
+                    }// if close
+                    else{
+                        speechOutput = "No column named "+ColumnNameSlotRaw+" was found, please check if columns exist in "+this.attributes['currentBoardName']+" project. Say 'add column' to create a column for adding cards. "+nextInvocation[Math.floor(Math.random()*nextInvocation.length)];
+                        this.emit(':askWithCard', speechOutput, reprompt, cardTitle, speechOutput);
                     }
                 }); //res end close
 
@@ -1207,163 +1230,168 @@ const handlers = {
                     }
                     console.log('Data1 : '+body);
                     data = JSON.parse(body);
-
-                    http3.get(optionspost3, response => {
-                        body2 = "";
-                        response.on('data', (chunk) => { body2 += chunk })
-                        response.on('end', () => {
-                            // Check for Authentication
-                            if(response.statusCode == 401){
-                                // this.emit('SignIn');
-                                speechOutput = 'Welcome to Glo Boards! Please, link your account by opening the Alexa app on your mobile device.';
-                                //any intent slot variables are listed here for convenience
-                                this.emit(':tell', speechOutput, 'Please, link your GitKraken account by opening the Alexa app on your mobile device.');
-                                this.emit(':tellWithLinkAccountCard', 'Please, link your GitKraken account by opening the Alexa app on your mobile device.');
-                            }
-                            data2 = JSON.parse(body2);
-                            console.log('Data2 : '+JSON.stringify(data2));
-                            var FromColNames = [];
-                            var setFromCol = 0;
-                            for(var i=0;i<data.columns.length;i++){
-                                //From Column Data from Current Board
-                                var ToColNames = [];
-                                var setToCol = 0;
-                                FromColNames.push(data.columns[i].name.toLowerCase());
-                                setFromCol++;
-                                // console.log("FromCol Set Cnt: "+setFromCol);
-                                // console.log("FromCol Data Len: "+data.columns.length);
-                                // console.log("FromCol Data: "+FromColNames);
-                                // if(data.columns[i].name.toLowerCase() === FromColumnSlotRaw.toLowerCase()){
-                                    for(var j=0;j<data.columns.length;j++){
-                                    //To Column Data from Current Board
-                                        var cardNames = [];
-                                        var setCard = 0;
-                                        ToColNames.push(data.columns[j].name.toLowerCase());
-                                        setToCol++;
-                                        // console.log("ToCol Set Cnt: "+setToCol);
-                                        // console.log("ToCol Data Len: "+data.columns.length);
-                                        // console.log("ToCol Data: "+ToColNames);
-                                    // if(data.columns[j].name.toLowerCase() === ToColumnSlotRaw.toLowerCase()){
-                                        for(var k=0;k<data2.length;k++){
-                                            //Cards Data from Current Board
-                                            cardNames.push(data2[k].name.toLowerCase());
-                                            setCard++;
-                                            // console.log("Card Set Cnt: "+setCard);
-                                            // console.log("Card Data Len: "+data2.length);
-                                            // console.log("Card Data: "+cardNames);
-                                            if(data.columns[i].name.toLowerCase() === FromColumnSlotRaw.toLowerCase() && data.columns[j].name.toLowerCase() === ToColumnSlotRaw.toLowerCase() && data2[k].name.toLowerCase() === CardNameSlotRaw.toLowerCase() && data.columns[i].id === data2[k].column_id){
-                                                datastring = "{\"column_id\":\""+data.columns[j].id+"\"}";
-                                                var optionspost2 = {
-                                                    url : 'https://gloapi.gitkraken.com/v1/glo/boards/'+this.attributes['currentBoardID']+'/cards/'+data2[k].id,
-                                                    method : 'POST',
-                                                    headers : reqheaders,
-                                                    body: datastring
-                                                };
-                                                console.log('Post Option: '+optionspost2);
-                                                var that = this;
-                                                http2.post(optionspost2,callback);
-                                                function callback(err,res,body3){
-                                                    if(!err && res.statusCode == 200 && body3){
-                                                        speechOutput = "Your card "+CardNameSlotRaw+" has been moved from column "+FromColumnSlotRaw+" to column "+ToColumnSlotRaw+" successfully. "+nextInvocation[Math.floor(Math.random()*nextInvocation.length)];
-                                                        that.emit(':askWithCard', speechOutput, reprompt, cardTitle, speechOutput);
-                                                    }
-                                                    else if(!err && res.statusCode == 400 ){
-                                                        // data2 = JSON.parse(body2);
-                                                        // console.log('Data2: '+JSON.stringify(data2));
-                                                        // console.log("Post Options: "+JSON.stringify(optionspost2));
-                                                        speechOutput = "Card "+CardNameSlotRaw+" is not valid, please check your whether card exists in "+that.attributes['currentBoardName']+". "+nextInvocation[Math.floor(Math.random()*nextInvocation.length)];
-                                                        that.emit(':askWithCard', speechOutput, reprompt, cardTitle, speechOutput);
-                                                    }
-                                                    else if(!err && res.statusCode == 404 ){
-                                                        // data2 = JSON.parse(body2);
-                                                        // console.log('Data2: '+JSON.stringify(data2));
-                                                        // console.log("Post Options: "+JSON.stringify(optionspost2));
-                                                        speechOutput = "Cannot find card "+CardNameSlotRaw+", please check if your card exists in "+that.attributes['currentBoardName']+". "+nextInvocation[Math.floor(Math.random()*nextInvocation.length)];
-                                                        that.emit(':askWithCard', speechOutput, reprompt, cardTitle, speechOutput);
-                                                    }
-                                                    // Check for Authentication
-                                                    else if(!err && res.statusCode == 401){
-                                                        // that.emit('SignIn');
-                                                        speechOutput = 'Welcome to Glo Boards! Please, link your account by opening the Alexa app on your mobile device.';
-                                                        //any intent slot variables are listed here for convenience
-                                                        that.emit(':tell', speechOutput, 'Please, link your GitKraken account by opening the Alexa app on your mobile device.');
-                                                        that.emit(':tellWithLinkAccountCard', 'Please, link your GitKraken account by opening the Alexa app on your mobile device.');
-                                                    }
-                                                    else if(err){
-                                                        console.log("Error: "+err);
-                                                    }
-                                                }// callback close
-                                            } //if check close
-                                            else if(data.columns[i].name.toLowerCase() === FromColumnSlotRaw.toLowerCase() && data.columns[j].name.toLowerCase() === ToColumnSlotRaw.toLowerCase() && data2[k].name.toLowerCase() === CardNameSlotRaw.toLowerCase() && data.columns[i].id !== data2[k].column_id){
-                                                // Correct wrong condition where card is not present in correct column 
-                                                console.log("Found Name: "+data2[k].name.toLowerCase());
-                                                console.log("Entered Name: "+CardNameSlotRaw.toLowerCase());
-                                                speechOutput = "Cannot find card "+CardNameSlotRaw+", please check if your card exists in "+FromColumnSlotRaw+" column. "+nextInvocation[Math.floor(Math.random()*nextInvocation.length)];
-                                                this.emit(':askWithCard', speechOutput, reprompt, cardTitle, speechOutput);
-                                            }
-                                            else if(!(cardNames.indexOf(CardNameSlotRaw.toLowerCase()) > -1) && (FromColNames.indexOf(FromColumnSlotRaw.toLowerCase()) > -1) && setCard === data2.length && setFromCol === data.columns.length){
-                                                //Card not present in column
-                                                console.log("Found Name: "+data2[k].name.toLowerCase());
-                                                console.log("Entered Name: "+CardNameSlotRaw.toLowerCase());
-                                                speechOutput = "Cannot find card "+CardNameSlotRaw+", please check if your card exists in "+FromColumnSlotRaw+" column. "+nextInvocation[Math.floor(Math.random()*nextInvocation.length)];
-                                                this.emit(':askWithCard', speechOutput, reprompt, cardTitle, speechOutput);
-                                            }
-                                            else if((cardNames.indexOf(CardNameSlotRaw.toLowerCase()) > -1) && !(FromColNames.indexOf(FromColumnSlotRaw.toLowerCase()) > -1) && setCard === data2.length && setFromCol === data.columns.length){
-                                                //Column containing card not present on board 
-                                                // console.log("Found Name: "+data2[k].name.toLowerCase());
-                                                console.log("Entered Name: "+FromColumnSlotRaw.toLowerCase());
-                                                console.log("Found Column: "+data.columns[i].name.toLowerCase());
-                                                speechOutput = "Cannot find column "+FromColumnSlotRaw+", please check if your column exists in "+this.attributes['currentBoardName']+". "+nextInvocation[Math.floor(Math.random()*nextInvocation.length)];
-                                                this.emit(':askWithCard', speechOutput, reprompt, cardTitle, speechOutput);
-                                            }
-                                            else if(!(cardNames.indexOf(CardNameSlotRaw.toLowerCase()) > -1) && !(FromColNames.indexOf(FromColumnSlotRaw.toLowerCase()) > -1) && setCard === data2.length && setFromCol === data.columns.length){
-                                                //card and Column containing card not present on board 
-                                                // console.log("Found Name: "+data2[k].name.toLowerCase());
-                                                console.log("Entered Name: "+FromColumnSlotRaw.toLowerCase());
-                                                console.log("Found Column: "+data.columns[i].name.toLowerCase());
-                                                speechOutput = "Cannot find column "+FromColumnSlotRaw+" and card "+CardNameSlotRaw+", please check if your column exists in "+this.attributes['currentBoardName']+". "+nextInvocation[Math.floor(Math.random()*nextInvocation.length)];
-                                                this.emit(':askWithCard', speechOutput, reprompt, cardTitle, speechOutput);
-                                            }
-                                            else if((cardNames.indexOf(CardNameSlotRaw.toLowerCase()) > -1) && !(ToColNames.indexOf(ToColumnSlotRaw.toLowerCase()) > -1) && setCard === data2.length && setToCol === data.columns.length){
-                                                //column to which card is to be moved not present
-                                                // console.log("Found Name: "+data2[k].name.toLowerCase());
-                                                console.log("Entered Name: "+ToColumnSlotRaw.toLowerCase());
-                                                console.log("Found Column: "+data.columns[j].name.toLowerCase());
-                                                speechOutput = "Cannot find column "+ToColumnSlotRaw+", please check if your column exists in "+this.attributes['currentBoardName']+". "+nextInvocation[Math.floor(Math.random()*nextInvocation.length)];
-                                                this.emit(':askWithCard', speechOutput, reprompt, cardTitle, speechOutput);
-                                            }
-                                            else if(!(cardNames.indexOf(CardNameSlotRaw.toLowerCase()) > -1) && !(ToColNames.indexOf(ToColumnSlotRaw.toLowerCase()) > -1) && setCard === data2.length && setToCol === data.columns.length){
-                                                //card and Column to which card is to be moved not present on board 
-                                                // console.log("Found Name: "+data2[k].name.toLowerCase());
-                                                console.log("Entered Name: "+ToColumnSlotRaw.toLowerCase());
-                                                console.log("Found Column: "+data.columns[j].name.toLowerCase());
-                                                speechOutput = "Cannot find column "+ToColumnSlotRaw+" and card "+CardNameSlotRaw+", please check if your column exists in "+this.attributes['currentBoardName']+". "+nextInvocation[Math.floor(Math.random()*nextInvocation.length)];
-                                                this.emit(':askWithCard', speechOutput, reprompt, cardTitle, speechOutput);
-                                            }
-                                            else if(!(cardNames.indexOf(CardNameSlotRaw.toLowerCase()) > -1) && !(FromColNames.indexOf(FromColumnSlotRaw.toLowerCase()) > -1) && !(ToColNames.indexOf(ToColumnSlotRaw.toLowerCase()) > -1) && setCard === data2.length && setToCol === data.columns.length){
-                                                //card column to which card is to be moved and column containing card not present on board 
-                                                // console.log("Found Name: "+data2[k].name.toLowerCase());
-                                                console.log("Entered Name: "+ToColumnSlotRaw.toLowerCase());
-                                                console.log("Found Column: "+data.columns[j].name.toLowerCase());
-                                                speechOutput = "Cannot find column "+ToColumnSlotRaw+" and card "+CardNameSlotRaw+", please check if your columns and card exists in "+this.attributes['currentBoardName']+". "+nextInvocation[Math.floor(Math.random()*nextInvocation.length)];
-                                                this.emit(':askWithCard', speechOutput, reprompt, cardTitle, speechOutput);
-                                            }
-                                        }// For Cards List
-                                    // }// if check ToColumn
-                                        // else{ -- check does not work
-                                        //     speechOutput = "Your card "+CardNameSlotRaw+" cannot be moved to column "+ToColumnSlotRaw+" as the column does not exist. What would you like to do next?";
-                                        //     this.emit(':askWithCard', speechOutput, reprompt, cardTitle, speechOutput);
-                                        // }
-                                    }// For To Column List
-                                // }// if check FromColumn
-                                // else{ -- check does not work
-                                //     speechOutput = "Your card "+CardNameSlotRaw+" cannot be moved from column "+FromColumnSlotRaw+" as the column does not exist. What would you like to do next?";
-                                //     this.emit(':askWithCard', speechOutput, reprompt, cardTitle, speechOutput);
-                                // }
-                            }// For From Column Lists
-                        }); //res end close
-                    }); //http get close
-
+                    if(data.columns.length > 0){
+                        http3.get(optionspost3, response => {
+                            body2 = "";
+                            response.on('data', (chunk) => { body2 += chunk })
+                            response.on('end', () => {
+                                // Check for Authentication
+                                if(response.statusCode == 401){
+                                    // this.emit('SignIn');
+                                    speechOutput = 'Welcome to Glo Boards! Please, link your account by opening the Alexa app on your mobile device.';
+                                    //any intent slot variables are listed here for convenience
+                                    this.emit(':tell', speechOutput, 'Please, link your GitKraken account by opening the Alexa app on your mobile device.');
+                                    this.emit(':tellWithLinkAccountCard', 'Please, link your GitKraken account by opening the Alexa app on your mobile device.');
+                                }
+                                data2 = JSON.parse(body2);
+                                console.log('Data2 : '+JSON.stringify(data2));
+                                var FromColNames = [];
+                                var setFromCol = 0;
+                                for(var i=0;i<data.columns.length;i++){
+                                    //From Column Data from Current Board
+                                    var ToColNames = [];
+                                    var setToCol = 0;
+                                    FromColNames.push(data.columns[i].name.toLowerCase());
+                                    setFromCol++;
+                                    // console.log("FromCol Set Cnt: "+setFromCol);
+                                    // console.log("FromCol Data Len: "+data.columns.length);
+                                    // console.log("FromCol Data: "+FromColNames);
+                                    // if(data.columns[i].name.toLowerCase() === FromColumnSlotRaw.toLowerCase()){
+                                        for(var j=0;j<data.columns.length;j++){
+                                        //To Column Data from Current Board
+                                            var cardNames = [];
+                                            var setCard = 0;
+                                            ToColNames.push(data.columns[j].name.toLowerCase());
+                                            setToCol++;
+                                            // console.log("ToCol Set Cnt: "+setToCol);
+                                            // console.log("ToCol Data Len: "+data.columns.length);
+                                            // console.log("ToCol Data: "+ToColNames);
+                                        // if(data.columns[j].name.toLowerCase() === ToColumnSlotRaw.toLowerCase()){
+                                            for(var k=0;k<data2.length;k++){
+                                                //Cards Data from Current Board
+                                                cardNames.push(data2[k].name.toLowerCase());
+                                                setCard++;
+                                                // console.log("Card Set Cnt: "+setCard);
+                                                // console.log("Card Data Len: "+data2.length);
+                                                // console.log("Card Data: "+cardNames);
+                                                if(data.columns[i].name.toLowerCase() === FromColumnSlotRaw.toLowerCase() && data.columns[j].name.toLowerCase() === ToColumnSlotRaw.toLowerCase() && data2[k].name.toLowerCase() === CardNameSlotRaw.toLowerCase() && data.columns[i].id === data2[k].column_id){
+                                                    datastring = "{\"column_id\":\""+data.columns[j].id+"\"}";
+                                                    var optionspost2 = {
+                                                        url : 'https://gloapi.gitkraken.com/v1/glo/boards/'+this.attributes['currentBoardID']+'/cards/'+data2[k].id,
+                                                        method : 'POST',
+                                                        headers : reqheaders,
+                                                        body: datastring
+                                                    };
+                                                    console.log('Post Option: '+optionspost2);
+                                                    var that = this;
+                                                    http2.post(optionspost2,callback);
+                                                    function callback(err,res,body3){
+                                                        if(!err && res.statusCode == 200 && body3){
+                                                            speechOutput = "Your card "+CardNameSlotRaw+" has been moved from column "+FromColumnSlotRaw+" to column "+ToColumnSlotRaw+" successfully. "+nextInvocation[Math.floor(Math.random()*nextInvocation.length)];
+                                                            that.emit(':askWithCard', speechOutput, reprompt, cardTitle, speechOutput);
+                                                        }
+                                                        else if(!err && res.statusCode == 400 ){
+                                                            // data2 = JSON.parse(body2);
+                                                            // console.log('Data2: '+JSON.stringify(data2));
+                                                            // console.log("Post Options: "+JSON.stringify(optionspost2));
+                                                            speechOutput = "Card "+CardNameSlotRaw+" is not valid, please check your whether card exists in "+that.attributes['currentBoardName']+". "+nextInvocation[Math.floor(Math.random()*nextInvocation.length)];
+                                                            that.emit(':askWithCard', speechOutput, reprompt, cardTitle, speechOutput);
+                                                        }
+                                                        else if(!err && res.statusCode == 404 ){
+                                                            // data2 = JSON.parse(body2);
+                                                            // console.log('Data2: '+JSON.stringify(data2));
+                                                            // console.log("Post Options: "+JSON.stringify(optionspost2));
+                                                            speechOutput = "Cannot find card "+CardNameSlotRaw+", please check if your card exists in "+that.attributes['currentBoardName']+". "+nextInvocation[Math.floor(Math.random()*nextInvocation.length)];
+                                                            that.emit(':askWithCard', speechOutput, reprompt, cardTitle, speechOutput);
+                                                        }
+                                                        // Check for Authentication
+                                                        else if(!err && res.statusCode == 401){
+                                                            // that.emit('SignIn');
+                                                            speechOutput = 'Welcome to Glo Boards! Please, link your account by opening the Alexa app on your mobile device.';
+                                                            //any intent slot variables are listed here for convenience
+                                                            that.emit(':tell', speechOutput, 'Please, link your GitKraken account by opening the Alexa app on your mobile device.');
+                                                            that.emit(':tellWithLinkAccountCard', 'Please, link your GitKraken account by opening the Alexa app on your mobile device.');
+                                                        }
+                                                        else if(err){
+                                                            console.log("Error: "+err);
+                                                        }
+                                                    }// callback close
+                                                } //if check close
+                                                else if(data.columns[i].name.toLowerCase() === FromColumnSlotRaw.toLowerCase() && data.columns[j].name.toLowerCase() === ToColumnSlotRaw.toLowerCase() && data2[k].name.toLowerCase() === CardNameSlotRaw.toLowerCase() && data.columns[i].id !== data2[k].column_id){
+                                                    // Correct wrong condition where card is not present in correct column 
+                                                    console.log("Found Name: "+data2[k].name.toLowerCase());
+                                                    console.log("Entered Name: "+CardNameSlotRaw.toLowerCase());
+                                                    speechOutput = "Cannot find card "+CardNameSlotRaw+", please check if your card exists in "+FromColumnSlotRaw+" column. "+nextInvocation[Math.floor(Math.random()*nextInvocation.length)];
+                                                    this.emit(':askWithCard', speechOutput, reprompt, cardTitle, speechOutput);
+                                                }
+                                                else if(!(cardNames.indexOf(CardNameSlotRaw.toLowerCase()) > -1) && (FromColNames.indexOf(FromColumnSlotRaw.toLowerCase()) > -1) && setCard === data2.length && setFromCol === data.columns.length){
+                                                    //Card not present in column
+                                                    console.log("Found Name: "+data2[k].name.toLowerCase());
+                                                    console.log("Entered Name: "+CardNameSlotRaw.toLowerCase());
+                                                    speechOutput = "Cannot find card "+CardNameSlotRaw+", please check if your card exists in "+FromColumnSlotRaw+" column. "+nextInvocation[Math.floor(Math.random()*nextInvocation.length)];
+                                                    this.emit(':askWithCard', speechOutput, reprompt, cardTitle, speechOutput);
+                                                }
+                                                else if((cardNames.indexOf(CardNameSlotRaw.toLowerCase()) > -1) && !(FromColNames.indexOf(FromColumnSlotRaw.toLowerCase()) > -1) && setCard === data2.length && setFromCol === data.columns.length){
+                                                    //Column containing card not present on board 
+                                                    // console.log("Found Name: "+data2[k].name.toLowerCase());
+                                                    console.log("Entered Name: "+FromColumnSlotRaw.toLowerCase());
+                                                    console.log("Found Column: "+data.columns[i].name.toLowerCase());
+                                                    speechOutput = "Cannot find column "+FromColumnSlotRaw+", please check if your column exists in "+this.attributes['currentBoardName']+". "+nextInvocation[Math.floor(Math.random()*nextInvocation.length)];
+                                                    this.emit(':askWithCard', speechOutput, reprompt, cardTitle, speechOutput);
+                                                }
+                                                else if(!(cardNames.indexOf(CardNameSlotRaw.toLowerCase()) > -1) && !(FromColNames.indexOf(FromColumnSlotRaw.toLowerCase()) > -1) && setCard === data2.length && setFromCol === data.columns.length){
+                                                    //card and Column containing card not present on board 
+                                                    // console.log("Found Name: "+data2[k].name.toLowerCase());
+                                                    console.log("Entered Name: "+FromColumnSlotRaw.toLowerCase());
+                                                    console.log("Found Column: "+data.columns[i].name.toLowerCase());
+                                                    speechOutput = "Cannot find column "+FromColumnSlotRaw+" and card "+CardNameSlotRaw+", please check if your column exists in "+this.attributes['currentBoardName']+". "+nextInvocation[Math.floor(Math.random()*nextInvocation.length)];
+                                                    this.emit(':askWithCard', speechOutput, reprompt, cardTitle, speechOutput);
+                                                }
+                                                else if((cardNames.indexOf(CardNameSlotRaw.toLowerCase()) > -1) && !(ToColNames.indexOf(ToColumnSlotRaw.toLowerCase()) > -1) && setCard === data2.length && setToCol === data.columns.length){
+                                                    //column to which card is to be moved not present
+                                                    // console.log("Found Name: "+data2[k].name.toLowerCase());
+                                                    console.log("Entered Name: "+ToColumnSlotRaw.toLowerCase());
+                                                    console.log("Found Column: "+data.columns[j].name.toLowerCase());
+                                                    speechOutput = "Cannot find column "+ToColumnSlotRaw+", please check if your column exists in "+this.attributes['currentBoardName']+". "+nextInvocation[Math.floor(Math.random()*nextInvocation.length)];
+                                                    this.emit(':askWithCard', speechOutput, reprompt, cardTitle, speechOutput);
+                                                }
+                                                else if(!(cardNames.indexOf(CardNameSlotRaw.toLowerCase()) > -1) && !(ToColNames.indexOf(ToColumnSlotRaw.toLowerCase()) > -1) && setCard === data2.length && setToCol === data.columns.length){
+                                                    //card and Column to which card is to be moved not present on board 
+                                                    // console.log("Found Name: "+data2[k].name.toLowerCase());
+                                                    console.log("Entered Name: "+ToColumnSlotRaw.toLowerCase());
+                                                    console.log("Found Column: "+data.columns[j].name.toLowerCase());
+                                                    speechOutput = "Cannot find column "+ToColumnSlotRaw+" and card "+CardNameSlotRaw+", please check if your column exists in "+this.attributes['currentBoardName']+". "+nextInvocation[Math.floor(Math.random()*nextInvocation.length)];
+                                                    this.emit(':askWithCard', speechOutput, reprompt, cardTitle, speechOutput);
+                                                }
+                                                else if(!(cardNames.indexOf(CardNameSlotRaw.toLowerCase()) > -1) && !(FromColNames.indexOf(FromColumnSlotRaw.toLowerCase()) > -1) && !(ToColNames.indexOf(ToColumnSlotRaw.toLowerCase()) > -1) && setCard === data2.length && setToCol === data.columns.length){
+                                                    //card column to which card is to be moved and column containing card not present on board 
+                                                    // console.log("Found Name: "+data2[k].name.toLowerCase());
+                                                    console.log("Entered Name: "+ToColumnSlotRaw.toLowerCase());
+                                                    console.log("Found Column: "+data.columns[j].name.toLowerCase());
+                                                    speechOutput = "Cannot find column "+ToColumnSlotRaw+" and card "+CardNameSlotRaw+", please check if your columns and card exists in "+this.attributes['currentBoardName']+". "+nextInvocation[Math.floor(Math.random()*nextInvocation.length)];
+                                                    this.emit(':askWithCard', speechOutput, reprompt, cardTitle, speechOutput);
+                                                }
+                                            }// For Cards List
+                                        // }// if check ToColumn
+                                            // else{ -- check does not work
+                                            //     speechOutput = "Your card "+CardNameSlotRaw+" cannot be moved to column "+ToColumnSlotRaw+" as the column does not exist. What would you like to do next?";
+                                            //     this.emit(':askWithCard', speechOutput, reprompt, cardTitle, speechOutput);
+                                            // }
+                                        }// For To Column List
+                                    // }// if check FromColumn
+                                    // else{ -- check does not work
+                                    //     speechOutput = "Your card "+CardNameSlotRaw+" cannot be moved from column "+FromColumnSlotRaw+" as the column does not exist. What would you like to do next?";
+                                    //     this.emit(':askWithCard', speechOutput, reprompt, cardTitle, speechOutput);
+                                    // }
+                                }// For From Column Lists
+                                
+                            }); //res end close
+                        }); //http get close
+                    }// if column check
+                    else{
+                        speechOutput = "No columns or cards exist in "+this.attributes['currentBoardName']+" project. Say 'add column' to create column for adding cards. "+nextInvocation[Math.floor(Math.random()*nextInvocation.length)];
+                        this.emit(':askWithCard', speechOutput, reprompt, cardTitle, speechOutput);
+                    }
                 }); //res end close
 
             }); //http get close
@@ -1409,7 +1437,8 @@ const handlers = {
             this.emit(':askWithCard', speechOutput, reprompt, cardTitle, cardText);
             // this.emit("SelectBoard");
         }
-        else{
+        // else
+        // {
             // API execution starts
             var reqheaders = {
                 'accept': 'application/json',
@@ -1441,99 +1470,106 @@ const handlers = {
                         this.emit(':tellWithLinkAccountCard', 'Please, link your GitKraken account by opening the Alexa app on your mobile device.');
                     }
                     data = JSON.parse(body);
-                    console.log('Data: '+JSON.stringify(data));
+                    console.log('BodyData: '+JSON.stringify(data));
+                    console.log("Data Len: "+data.length);
                     var cardNames = [];
                     var set = 0;
-                    for(var i=0;i<data.length;i++){
-                        set++;
-                        cardNames.push(data[i].name.toLowerCase());
-                        console.log("Set: "+set);
-                        console.log("Card Len: "+data.length);
-                        console.log("Card Name: "+cardNames);
-                        console.log("Data Name: "+data[i].name.toLowerCase());
-                        if(data[i].name.toLowerCase() == CardNameSlotRaw.toLowerCase() && data[i].board_id == this.attributes["currentBoardID"] && this.event.request.intent.confirmationStatus === 'CONFIRMED'){
-                            var optionspost2 = {
-                                url : 'https://gloapi.gitkraken.com/v1/glo/boards/'+this.attributes["currentBoardID"]+'/cards/'+data[i].id,
-                                method : 'DELETE',
-                                headers : reqheaders2
-                            };
-                            console.log("CardID: "+data[i].name);
-                            console.log("CardName:" + CardNameSlotRaw);
-                            var that = this;
-                            http2.del(optionspost2, callback);
-                            function callback(err,res,body2){
-                                // body2 = "";
-                                // res.on('data', (chunk) => { body2 += chunk })
-                                // res.on('end', () => {
-                                console.log("Status Code: "+res.statusCode);
-                                if(!err && res.statusCode == 204 ){
-                                    // data2 = JSON.parse(body2);
-                                    // console.log('Data2: '+JSON.stringify(data2));
-                                    console.log("Post Options: "+JSON.stringify(optionspost2));
-                                    // code
-                                    // console.log('Success: '+CardNameSlotRaw+' ColumnName: '+ColumnName);
-                                    speechOutput = "Your card "+CardNameSlotRaw+" has been deleted successfully from board "+that.attributes['currentBoardName']+". "+nextInvocation[Math.floor(Math.random()*nextInvocation.length)];
-                                    that.emit(':askWithCard', speechOutput, reprompt, cardTitle, speechOutput);
-                                    // console.log('Successful execution');
+                    if(data.length > 0){
+                        for(var i=0;i<data.length;i++){
+                            set++;
+                            cardNames.push(data[i].name.toLowerCase());
+                            console.log("Set: "+set);
+                            console.log("Card Len: "+data.length);
+                            console.log("Card Name: "+cardNames);
+                            console.log("Data Name: "+data[i].name.toLowerCase());
+                            if(data[i].name.toLowerCase() === CardNameSlotRaw.toLowerCase() && this.event.request.intent.confirmationStatus === 'CONFIRMED'){
+                                var optionspost2 = {
+                                    url : 'https://gloapi.gitkraken.com/v1/glo/boards/'+this.attributes["currentBoardID"]+'/cards/'+data[i].id,
+                                    method : 'DELETE',
+                                    headers : reqheaders2
+                                };
+                                console.log("CardID: "+data[i].name);
+                                console.log("CardName:" + CardNameSlotRaw);
+                                var that = this;
+                                http2.del(optionspost2, callback);
+                                function callback(err,res,body2){
+                                    // body2 = "";
+                                    // res.on('data', (chunk) => { body2 += chunk })
+                                    // res.on('end', () => {
+                                    console.log("Status Code: "+res.statusCode);
+                                    if(!err && res.statusCode == 204 ){
+                                        // data2 = JSON.parse(body2);
+                                        // console.log('Data2: '+JSON.stringify(data2));
+                                        console.log("Post Options: "+JSON.stringify(optionspost2));
+                                        // code
+                                        // console.log('Success: '+CardNameSlotRaw+' ColumnName: '+ColumnName);
+                                        speechOutput = "Your card "+CardNameSlotRaw+" has been deleted successfully from board "+that.attributes['currentBoardName']+". "+nextInvocation[Math.floor(Math.random()*nextInvocation.length)];
+                                        that.emit(':askWithCard', speechOutput, reprompt, cardTitle, speechOutput);
+                                        // console.log('Successful execution');
+                                    }
+                                    else if(!err && res.statusCode == 400 ){
+                                        // data2 = JSON.parse(body2);
+                                        // console.log('Data2: '+JSON.stringify(data2));
+                                        console.log("Post Options: "+JSON.stringify(optionspost2));
+                                        speechOutput = "Card "+CardNameSlotRaw+" is not valid, please check your whether card exists in "+that.attributes['currentBoardName']+". "+nextInvocation[Math.floor(Math.random()*nextInvocation.length)];
+                                        that.emit(':askWithCard', speechOutput, reprompt, cardTitle, speechOutput);
+                                    }
+                                    else if(!err && res.statusCode == 404 ){
+                                        // data2 = JSON.parse(body2);
+                                        // console.log('Data2: '+JSON.stringify(data2));
+                                        console.log("Post Options: "+JSON.stringify(optionspost2));
+                                        speechOutput = "Cannot find card "+CardNameSlotRaw+", please check if your card exists in "+that.attributes['currentBoardName']+". "+nextInvocation[Math.floor(Math.random()*nextInvocation.length)];
+                                        that.emit(':askWithCard', speechOutput, reprompt, cardTitle, speechOutput);
+                                    }
+                                    // Check for Authentication
+                                    else if(!err && res.statusCode == 401){
+                                        // that.emit('SignIn');
+                                        speechOutput = 'Welcome to Glo Boards! Please, link your account by opening the Alexa app on your mobile device.';
+                                        //any intent slot variables are listed here for convenience
+                                        that.emit(':tell', speechOutput, 'Please, link your GitKraken account by opening the Alexa app on your mobile device.');
+                                        that.emit(':tellWithLinkAccountCard', 'Please, link your GitKraken account by opening the Alexa app on your mobile device.');
+                                    }
+                                    else{
+                                        // code
+                                        // data2 = JSON.parse(body2);
+                                        // console.log('Data2: '+JSON.stringify(data2));
+                                        console.log("Post Options: "+JSON.stringify(optionspost2));
+                                        speechOutput = "Sorry something went wrong. To try again say delete a card.";
+                                        that.emit(':askWithCard', speechOutput, reprompt, cardTitle, speechOutput);
+                                    }
+                                    // this.emit(':askWithCard', speechOutput, reprompt, cardTitle, speechOutput);
+                                    // });
                                 }
-                                else if(!err && res.statusCode == 400 ){
-                                    // data2 = JSON.parse(body2);
-                                    // console.log('Data2: '+JSON.stringify(data2));
-                                    console.log("Post Options: "+JSON.stringify(optionspost2));
-                                    speechOutput = "Card "+CardNameSlotRaw+" is not valid, please check your whether card exists in "+that.attributes['currentBoardName']+". "+nextInvocation[Math.floor(Math.random()*nextInvocation.length)];
-                                    that.emit(':askWithCard', speechOutput, reprompt, cardTitle, speechOutput);
-                                }
-                                else if(!err && res.statusCode == 404 ){
-                                    // data2 = JSON.parse(body2);
-                                    // console.log('Data2: '+JSON.stringify(data2));
-                                    console.log("Post Options: "+JSON.stringify(optionspost2));
-                                    speechOutput = "Cannot find card "+CardNameSlotRaw+", please check if your card exists in "+that.attributes['currentBoardName']+". "+nextInvocation[Math.floor(Math.random()*nextInvocation.length)];
-                                    that.emit(':askWithCard', speechOutput, reprompt, cardTitle, speechOutput);
-                                }
-                                // Check for Authentication
-                                else if(!err && res.statusCode == 401){
-                                    // that.emit('SignIn');
-                                    speechOutput = 'Welcome to Glo Boards! Please, link your account by opening the Alexa app on your mobile device.';
-                                    //any intent slot variables are listed here for convenience
-                                    that.emit(':tell', speechOutput, 'Please, link your GitKraken account by opening the Alexa app on your mobile device.');
-                                    that.emit(':tellWithLinkAccountCard', 'Please, link your GitKraken account by opening the Alexa app on your mobile device.');
-                                }
-                                else{
-                                    // code
-                                    // data2 = JSON.parse(body2);
-                                    // console.log('Data2: '+JSON.stringify(data2));
-                                    console.log("Post Options: "+JSON.stringify(optionspost2));
-                                    speechOutput = "Sorry something went wrong. To try again say delete a card.";
-                                    that.emit(':askWithCard', speechOutput, reprompt, cardTitle, speechOutput);
-                                }
-                                // this.emit(':askWithCard', speechOutput, reprompt, cardTitle, speechOutput);
-                                // });
                             }
-                        }
-                        else if(data[i].name.toLowerCase() == CardNameSlotRaw.toLowerCase() && this.event.request.intent.confirmationStatus !== 'CONFIRMED'){
-                            console.log("Found Name: "+data[i].name.toLowerCase());
-                            console.log("Entered Name: "+CardNameSlotRaw.toLowerCase());
-                            speechOutput = "Cancelled deleting card "+CardNameSlotRaw+". "+nextInvocation[Math.floor(Math.random()*nextInvocation.length)];
-                            this.emit(':askWithCard', speechOutput, reprompt, cardTitle, speechOutput);
-                        }
-                        else if(this.event.request.intent.confirmationStatus === 'CONFIRMED' && !(cardNames.indexOf(CardNameSlotRaw.toLowerCase()) > -1) && set === data.length){
-                            console.log("Found Name: "+data[i].name.toLowerCase());
-                            console.log("Entered Name: "+CardNameSlotRaw.toLowerCase());
-                            speechOutput = "Cannot find card "+CardNameSlotRaw+", please check if your card exists in "+this.attributes['currentBoardName']+". "+nextInvocation[Math.floor(Math.random()*nextInvocation.length)];
-                            this.emit(':askWithCard', speechOutput, reprompt, cardTitle, speechOutput);
-                        }
-                        else if(this.event.request.intent.confirmationStatus !== 'CONFIRMED' && !(cardNames.indexOf(CardNameSlotRaw.toLowerCase()) > -1) && set === data.length){
-                            console.log("Found Name: "+data[i].name.toLowerCase());
-                            console.log("Entered Name: "+CardNameSlotRaw.toLowerCase());
-                            speechOutput = "Cancelled deleting card "+CardNameSlotRaw+", please check if your card exists in "+this.attributes['currentBoardName']+". "+nextInvocation[Math.floor(Math.random()*nextInvocation.length)];
-                            this.emit(':askWithCard', speechOutput, reprompt, cardTitle, speechOutput);
-                        }
-                    }// for close
+                            else if(data[i].name.toLowerCase() === CardNameSlotRaw.toLowerCase() && this.event.request.intent.confirmationStatus !== 'CONFIRMED'){
+                                console.log("Found Name: "+data[i].name.toLowerCase());
+                                console.log("Entered Name: "+CardNameSlotRaw.toLowerCase());
+                                speechOutput = "Cancelled deleting card "+CardNameSlotRaw+". "+nextInvocation[Math.floor(Math.random()*nextInvocation.length)];
+                                this.emit(':askWithCard', speechOutput, reprompt, cardTitle, speechOutput);
+                            }
+                            else if(this.event.request.intent.confirmationStatus === 'CONFIRMED' && !(cardNames.indexOf(CardNameSlotRaw.toLowerCase()) > -1) && set === data.length){
+                                console.log("Found Name: "+data[i].name.toLowerCase());
+                                console.log("Entered Name: "+CardNameSlotRaw.toLowerCase());
+                                speechOutput = "Cannot find card "+CardNameSlotRaw+", please check if your card exists in "+this.attributes['currentBoardName']+". "+nextInvocation[Math.floor(Math.random()*nextInvocation.length)];
+                                this.emit(':askWithCard', speechOutput, reprompt, cardTitle, speechOutput);
+                            }
+                            else if(this.event.request.intent.confirmationStatus !== 'CONFIRMED' && !(cardNames.indexOf(CardNameSlotRaw.toLowerCase()) > -1) && set === data.length){
+                                console.log("Found Name: "+data[i].name.toLowerCase());
+                                console.log("Entered Name: "+CardNameSlotRaw.toLowerCase());
+                                speechOutput = "Cancelled deleting card "+CardNameSlotRaw+", please check if your card exists in "+this.attributes['currentBoardName']+". "+nextInvocation[Math.floor(Math.random()*nextInvocation.length)];
+                                this.emit(':askWithCard', speechOutput, reprompt, cardTitle, speechOutput);
+                            }
+                        }// for close
+                    }// if close
+                    else{
+                        speechOutput = "No card named "+CardNameSlotRaw+" was found, please check if cards exist in "+this.attributes['currentBoardName']+" project. "+nextInvocation[Math.floor(Math.random()*nextInvocation.length)];
+                        this.emit(':askWithCard', speechOutput, reprompt, cardTitle, speechOutput);
+                    } 
                 }); //res end close
 
             }); //http get close
             //API execution ends
-        }
+        // }
 
         //Your custom intent handling goes here
         // speechOutput = "This is a place holder response for the intent named DeleteCard, which includes dialogs. This intent has one slot, which is CardName. Anything else?";
@@ -1770,7 +1806,7 @@ function delegateSlotCollection(){
     if (this.event.request.dialogState === "STARTED") {
       console.log("in Beginning");
 	  let updatedIntent= null;
-	  // updatedIntent=this.event.request.intent;
+	  // updatedIntent=this.event.request.intent; //uncomment this is using ASK SDK 1.0.9 or newer
       //optionally pre-fill slots: update the intent object with slot values for which
       //you have defaults, then return Dialog.Delegate with this updated intent
       // in the updatedIntent property
