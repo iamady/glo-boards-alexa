@@ -3,6 +3,10 @@
 ## Installation
 GitKraken Glo Boards is released on Amazon Alexa U.S. [Enable Now](https://www.amazon.com/dp/B07QFGGK2V/)
 
+<p align="center">
+  <img src="./misc/Glo-Boards-Alexa-Icon-512.png" />
+</p>
+
 ## Development
 ```sh
 git clone https://github.com/iamady/glo-boards-alexa.git
